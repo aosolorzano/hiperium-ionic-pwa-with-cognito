@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 import { Platform } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -15,12 +15,13 @@ export class AppComponent {
 
   public selectedIndex = 0;
   public isLoggedIn = false;
+  public welcomeMessage = '';
 
   public appPages = [
     {
       title: 'DashBoard',
       url: '/members/dashboard',
-      icon: 'mail'
+      icon: 'home'
     }
   ];
 
@@ -35,23 +36,23 @@ export class AppComponent {
   }
 
   initializeApp() {
+    console.log('AppComponent - initializeApp()');
     this.platform.ready().then(() => {
+      console.log('AppComponent - Platform is ready.');
       this.statusBar.styleDefault();
       this.splashScreen.hide();
 
+      this.authService.checkToken();
       this.authService.authenticationState.subscribe(state => {
-        console.log('Auth changed: ', state);
         this.isLoggedIn = state;
-        if (state) {
+        console.log('AppComponent - AuthService changed. Is user LoggedIn?: ', this.isLoggedIn);
+
+        if (this.isLoggedIn) {
+          const username = this.authService.getUsername();
+          this.welcomeMessage = `Welcome ${ username }`;
           this.router.navigate(['members', 'dashboard']);
-        } else {
-          this.router.navigate(['login']);
         }
       });
     });
-  }
-
-  logout() {
-    this.authService.logout();
   }
 }
