@@ -12,13 +12,12 @@
                             <ion-label>{{ p.title }}</ion-label>
                         </ion-item>
                     </ion-menu-toggle>
-                </ion-list>
-
-                <ion-list id="labels-list">
-                    <ion-item outerDirection="root" routerLink="/" detail="false">
-                        <ion-icon slot="start" ios="log-out-outline" md="log-out-sharp"></ion-icon>
-                        <amplify-sign-out></amplify-sign-out>
-                    </ion-item>
+                    <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages; let i = index">
+                        <ion-item (click)="signOut()" routerDirection="root" routerLink="/" lines="none" detail="false">
+                            <ion-icon slot="start" ios="log-out-outline" md="log-out-sharp"></ion-icon>
+                            <ion-label>Logout</ion-label>
+                        </ion-item>
+                    </ion-menu-toggle>
                 </ion-list>
             </ion-content>
         </ion-menu>

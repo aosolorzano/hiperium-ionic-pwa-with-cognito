@@ -16,14 +16,15 @@ export class AuthenticationService {
 
   constructor(private storage: Storage) { }
 
-  async addUserSession(loggedUser: CognitoUserInterface) {
-    console.log('AuthenticationService - Adding user to session...');
+  async userSignedIn(loggedUser: CognitoUserInterface): Promise<void> {
     this.user = loggedUser;
+    console.log('AuthenticationService - Adding user to session: ');
+    console.log(this.user);
     await this.storage.set(TOKEN_KEY, this.user.signInUserSession.accessToken.jwtToken);
     this.authenticationState.next(true);
   }
 
-  async userLogout() {
+  async userLogout(): Promise<void> {
     console.log('AuthenticationService - Removing user from session...');
     await this.storage.remove(TOKEN_KEY);
     this.authenticationState.next(false);
@@ -36,18 +37,11 @@ export class AuthenticationService {
 
   getUsername(): string {
     console.log('AuthenticationService - getUsername()');
-    if (this.user) {
+    if (this.authenticationState.value) {
       return this.user.username;
     } else {
       return '';
     }
   }
 
-  async checkToken() {
-    console.log('AuthenticationService - checkToken()');
-    const res = await this.storage.get(TOKEN_KEY);
-    if (res) {
-      this.authenticationState.next(true);
-    }
-  }
 }

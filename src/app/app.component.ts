@@ -1,17 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
-import { Platform } from '@ionic/angular';
-import { SplashScreen } from '@ionic-native/splash-screen/ngx';
-import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AuthenticationService } from './services/authentication/authentication.service';
 import { Router } from '@angular/router';
+import { Auth } from 'aws-amplify';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
   public selectedIndex = 0;
   public isLoggedIn = false;
@@ -25,34 +23,34 @@ export class AppComponent {
     }
   ];
 
-  constructor(
-    private platform: Platform,
-    private splashScreen: SplashScreen,
-    private statusBar: StatusBar,
-    private authService: AuthenticationService,
-    private router: Router
-  ) {
-    this.initializeApp();
+  constructor(private authService: AuthenticationService, private router: Router) {}
+
+  ngOnInit() {
+    console.log('AppComponent - ngOnInit()');
+    this.authService.authenticationState.subscribe(async state => {
+      console.log('AppComponent - Auth Service changed. Is user loggedin: ' + state);
+      this.updateLoggedInStatus(state);
+      if (state) {
+        const username = this.authService.getUsername();
+        this.welcomeMessage = `Welcome ${ username }`;
+        await this.router.navigateByUrl('/members/dashboard');
+      }
+    });
   }
 
-  initializeApp() {
-    console.log('AppComponent - initializeApp()');
-    this.platform.ready().then(() => {
-      console.log('AppComponent - Platform is ready.');
-      this.statusBar.styleDefault();
-      this.splashScreen.hide();
+  updateLoggedInStatus(loggedIn: boolean) {
+    console.log('AppComponent - updateLoggedInStatus(): ', loggedIn);
+    this.isLoggedIn = loggedIn;
+  }
 
-      this.authService.checkToken();
-      this.authService.authenticationState.subscribe(state => {
-        this.isLoggedIn = state;
-        console.log('AppComponent - AuthService changed. Is user LoggedIn?: ', this.isLoggedIn);
-
-        if (this.isLoggedIn) {
-          const username = this.authService.getUsername();
-          this.welcomeMessage = `Welcome ${ username }`;
-          this.router.navigate(['members', 'dashboard']);
-        }
-      });
+  async signOut() {
+    console.log('AppComponent - signOut() INIT');
+    await Auth.signOut({ global: true }).then(async (response) => {
+      console.log('signOut successful...');
+      await this.authService.userLogout();
+    }).catch ((error) => {
+      console.log('error signing out: ', error);
     });
+    console.log('AppComponent - signOut() END');
   }
 }

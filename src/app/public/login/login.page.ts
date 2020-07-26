@@ -12,17 +12,11 @@ export class LoginPage implements OnInit {
 
   constructor(private authService: AuthenticationService) { }
 
-  ngOnInit() {
-    onAuthUIStateChange((authState, authData) => {
+  async ngOnInit() {
+    onAuthUIStateChange(async (authState, authData) => {
       console.log('LoginPage - onAuthUIStateChange(): ', authState);
-
-      const user = authData as CognitoUserInterface;
-      console.log('LoginPage - User: ', user);
-
-      if (user) {
-        this.authService.addUserSession(user);
-      } else if ('signedout' === authState) {
-        this.authService.userLogout();
+      if ('signedin' === authState) {
+        await this.authService.userSignedIn(authData as CognitoUserInterface);
       }
     });
   }

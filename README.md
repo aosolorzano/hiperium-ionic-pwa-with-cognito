@@ -7,8 +7,6 @@ This application is purely an Amplify demo on the Ionic Framework with Angular. 
 - [Getting Started](#getting-started)
 - [Deploying](#deploying)
   - [Progressive Web App](#progressive-web-app)
-  - [Android](#android)
-  - [iOS](#ios)
 
 
 ## Getting Started
@@ -25,9 +23,6 @@ This application is purely an Amplify demo on the Ionic Framework with Angular. 
 * Add Cognito support: `amplify add auth`. Uses default configuration preferably.
 * Change file extension `src/aws-exports.js` to `src/aws-exports.ts`.
 * Run `npm install` to install all dependencies.
-* Build the project for production `ionic build --prod`.
-* Run `http-server ./www -p 8100` to visualize the app in your browser.
-* Profit. :tada:
 
 _Note: See [How to Prevent Permissions Errors](https://docs.npmjs.com/getting-started/fixing-npm-permissions) if you are running into issues when trying to install packages globally._
 
@@ -36,14 +31,7 @@ _Note: See [How to Prevent Permissions Errors](https://docs.npmjs.com/getting-st
 
 ### Progressive Web App
 
-1. Un-comment [these lines](https://github.com/ionic-team/ionic2-app-base/blob/master/src/index.html#L21)
-2. Run `npm run ionic:build --prod`
-3. Push the `www` folder to S3 for static web hosting.
-
-### Android
-
-1. Run `ionic cordova run android --prod`
-
-### iOS
-
-1. Run `ionic cordova run ios --prod`
+1. Build the project for production `ionic build --prod`.
+2. Run `http-server ./www -p 8100` to visualize the app in your browser.
+3. Profit. :tada:
+4. Push the `www` folder to AWS S3 for static web hosting.
